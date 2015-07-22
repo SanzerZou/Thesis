@@ -1,0 +1,180 @@
+\documentclass[8pt, CJK, red, mathserif]{beamer}
+\usepackage{CJK}
+\usepackage[english]{babel}
+\usepackage{algorithm} %format of the algorithm
+\usepackage{algorithmic} %format of the algorithm
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{color}
+
+%\usetheme{Warsaw}
+\renewcommand{\raggedright}{\leftskip = 0pt \rightskip = 0pt plus 0cm}
+\raggedright
+\usetheme{antibes}
+%\usecolortheme{beaver}
+%\usecolortheme{sidebartab}
+\usecolortheme{whale}      % Outer color themes, 其他选择: whale, seahorse, dolphin . 换一个编译看看有什么不同.
+\usecolortheme{orchid}     % Inner color themes, 其他选择: lily, orchid
+\useinnertheme{circles}
+%\beamertemplateshadingbackground{blue!30}{white!15}
+%-----------settings--------------%
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\setbeamertemplate{caption}[numbered]
+\renewcommand*{\arraystretch}{1}
+%\newcommand{\tinytiny}{3pt}
+
+%\setbeamercolor{section in sidebar}{fg=xx,bg=xx}
+\setbeamerfont{section in sidebar}{size = \tiny}
+\setbeamerfont{block body}{size = \small}
+
+%\setCJKmainfont[BoldFont={SimHei}, ItalicFont= {SimSun}]{Microsoft YaHei}
+
+\newcommand{\songti}{\CJKfamily{song}}        % 宋体
+\newcommand{\fangsong}{\CJKfamily{fs}}        % 仿宋体
+\newcommand{\kaishu}{\CJKfamily{kai}}         % 楷体
+\newcommand{\heiti}{\CJKfamily{hei}}          % 黑体
+\newcommand{\lishu}{\CJKfamily{li}}           % 隶书
+\newcommand{\youyuang}{\CJKfamily{you}}       % 幼圆
+
+\def\simwidth{0.75\textwidth} % 仿真图宽度
+
+%\usepackage[amsmath,thref,thmmarks]{ntheorem}
+%\newtheorem{theorem}{定理}{chapter}
+%\newtheorem{lemma}{引理}{chapter}
+%\newtheorem{definition}{定义}{chapter}
+
+
+
+%================================================================================================%
+\begin{document}
+\begin{CJK*}{GBK}{song}
+\hypersetup{CJKbookmarks=true}
+
+%%------------------------------------------
+
+\title{\heiti 工作汇报}
+\author[邹尚璋]{{\kaishu 邹尚璋\\ {zou.szhang@gmail.com}}
+}
+\date{\today}
+
+\frame{\titlepage}
+
+
+%============================================================================================%
+\section{工作汇报}
+\frame{\frametitle{\heiti{文章信息}}
+\begin{itemize}
+  \item 求解$\nabla f(\bm{P})$
+\end{itemize}
+\begin{align}
+&f(\bm{P}) = \sum_{b \in \mathcal{B}_{ABS}} \sum_{u \in \mathcal{U}_b} \log(R_{ub}) \\
+&\frac{\partial f(\bm{P})}{\partial P_b} =  \sum_{u \in \mathcal{U}_b} \log(R_{ub}) +
+    \sum_{k \in \mathcal{M}_{ABS}, k \neq b} \sum_{u \in \mathcal{U}_k} \log(R_{uk}) +
+    \sum_{k \in \mathcal{P}_{ABS}} \sum_{u \in \mathcal{U}_k} \log(R_{uk}) \\
+&\frac{\partial{\log(R_{ub})}}{\partial P_b} = 
+\left\{
+\begin{matrix}
+&\frac{B\log_2 e}{R_{ub}(1 + SINR_{ub})} \cdot \frac{G_{ub}}{I_{ub}}, &x_{ub}=1 \\
+&\frac{B\log_2 e}{R_{uk}(1 + SINR_{uk})} \cdot \frac{-P_k G_{uk} G_{ub}}{(P_b G_{ub} + I_{uk})^ 2 },& x_{uk}=1, k \in \mathcal{M}_{ABS}, k \neq b \\
+&\frac{B\log_2 e}{R_{uk}(1 + SINR_{uk})} \cdot \frac{-P^P G_{uk} G_{ub}}{(P_b G_{ub} + I_{uk})^ 2 }, &x_{uk}=1, k \in \mathcal{P}_{ABS}
+\end{matrix}
+\right.
+\end{align}
+\begin{itemize}
+  \item 将(3)带入(2)即可$\frac{\partial f(\bm{P})}{\partial P_b}$, 即可求出$\nabla f(\bm{P})$
+\end{itemize}
+
+}
+%\subsection{模型介绍}
+\frame{\frametitle{\heiti{目的与贡献}}
+\begin{block}{\heiti 目的}
+传统ABS方法中牺牲Macro用户的吞吐量来减少对Small cell的干扰，不适用于非均匀网络
+\end{block}
+\begin{block}{\heiti 贡献}
+\begin{itemize}
+  \item 提出协调功率、CRE、频域及时域来进行干扰协调；
+  \item 问题建模及提出简单的算法求解问题；
+\end{itemize}
+\end{block}
+}
+
+\frame{\frametitle{\heiti{系统模型}}
+\begin{block}{\heiti 场景划分}
+根据Pico与Macro站的距离，划分为两种场景并采用不同的应对策略。定义一个距离门限值$K$，当存在任意Pico与Macro的距离大于此门限值则为场景一，反之则为场景二。
+\end{block}
+}
+
+\frame{\frametitle{\heiti{示意图}}
+%\begin{figure}
+%  \includegraphics[width=1\textwidth]{case.jpg}
+%\end{figure}
+}
+
+\frame{\frametitle{\heiti{场景一}}
+\begin{block}{\heiti 场景一}
+\begin{itemize}
+  \item 由于所有Pico都与Macro相距较远，所以认为Macro对Pico的干扰很小；
+  \item 因此，Macro采用Low-Power ABS；
+  \item CRE将Pico用户划分为两部分，同样门限值$K$将Macro用户也划分为两部分；
+  \item Pico的CRE用户和Macro的中心用户只在ABS时隙调度，余下用户优先使用非ABS资源；
+\end{itemize}
+\end{block}
+}
+
+\frame{\frametitle{\heiti{场景二}}
+\begin{block}{\heiti 场景二}
+\begin{itemize}
+  \item 由于所有Pico都与Macro相距较远，所以认为Macro对Pico的干扰很大；
+  \item 因此，Macro在ABS时隙划分一部分频域资源给Pico CRE用户使用；
+  \item $\epsilon = \min([\alpha*numCRE], numRB)$ 表示频域资源比率，但是文章并没有表示$\alpha$如何设置；
+  \item Pico的CRE用户只在ABS时隙使用Macro分配的频域资源；
+  \item 场景一和场景二都采用比例公平调度；
+\end{itemize}
+\end{block}
+}
+
+\frame{\frametitle{\heiti{仿真场景}}
+%\begin{figure}
+%  \includegraphics[width=0.75\textwidth]{simulation.jpg}
+%\end{figure}
+\begin{block}{\heiti 仿真场景}
+\begin{itemize}
+  \item 一个Macro和两个Pico，距离分别为400m，320m，150m；
+  \item 总共90个用户，热点区域用户为可调参数；
+  \item 对比组：zero power-ABS；
+\end{itemize}
+\end{block}
+}
+
+\frame{\frametitle{\heiti{场景一结果}}
+%\begin{figure}
+%  \includegraphics[width=0.75\textwidth]{case1.jpg}
+%\end{figure}
+}
+
+\frame{\frametitle{\heiti{场景二结果}}
+%\begin{figure}
+%  \includegraphics[width=0.70\textwidth]{case2.jpg}
+%\end{figure}
+}
+
+\frame{\frametitle{\heiti{结论}}
+\begin{block}{\heiti 结论}
+文章只提出新颖的策略，但是并没有讨论参数如何设置。并且文章只比较了平均速率，而没有建模评价函数。
+\end{block}
+}
+
+%============================================================================================%
+\frame{
+%\frametitle{Acknowledgements}
+\begin{center}
+    \large
+    Thank you!\\
+\end{center}
+}
+
+%%------------------------------------------
+\end{CJK*}
+\end{document}
